@@ -12,6 +12,7 @@ namespace MCLauncher {
     using System.IO.Compression;
     using System.Threading;
     using System.Windows.Data;
+    using System.Xml;
     using Windows.ApplicationModel;
     using Windows.Foundation;
     using Windows.Management.Core;
@@ -396,6 +397,13 @@ namespace MCLauncher {
                     } else {
                         Debug.WriteLine("Not deleting APPX due to user preferences");
                     }
+
+                    var manifest = new XmlDocument();
+                    var manifestPath = Path.Combine(dirPath, "AppxManifest.xml");
+                    manifest.Load(manifestPath);
+                    manifest.DocumentElement?.SetAttribute("xmlns:desktop4", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4");
+                    ((XmlElement)manifest.GetElementsByTagName("Application")[0])?.SetAttribute("SupportsMultipleInstances", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/4", "true");
+                    manifest.Save(manifestPath);
                 } catch (Exception e) {
                     Debug.WriteLine("Extraction failed:\n" + e.ToString());
                     MessageBox.Show("Extraction failed:\n" + e.ToString());
