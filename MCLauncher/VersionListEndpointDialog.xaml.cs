@@ -24,9 +24,10 @@ namespace MCLauncher
         public delegate void SetEndpointHandler(object sender, string newUwpIdsEndpoint, string newGdkPackageUrlsEndpoint);
 
 
-        public VersionListEndpointDialog(string currentEndpoint) {
+        public VersionListEndpointDialog(string currentEndpoint, string currentEndpointGDK) {
             InitializeComponent();
             EndpointTextBox.Text = currentEndpoint;
+            GDKUrlsEndpointTextBox.Text = currentEndpointGDK;
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e) {
