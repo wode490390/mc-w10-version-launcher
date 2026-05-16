@@ -102,6 +102,12 @@
     </ApplicationDefinition>
     <Compile Include="LinkResolver.cs" />
     <Compile Include="Preferences.cs" />
+    <Compile Include="DownloadOptionsDialog.xaml.cs">
+      <DependentUpon>DownloadOptionsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MsixvcDownloadUrlDialog.xaml.cs">
+      <DependentUpon>MsixvcDownloadUrlDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -116,6 +122,14 @@
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DownloadOptionsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MsixvcDownloadUrlDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -185,6 +199,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Downloader">
+      <Version>3.1.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -984,7 +984,46 @@ namespace MCLauncher {
             Debug.WriteLine("App re-register done!");
         }
 
+        private int GetDownloadChunkCount() {
+            return Math.Min(
+                DownloadOptionsDialog.MaximumChunkCount,
+                Math.Max(DownloadOptionsDialog.MinimumChunkCount, UserPrefs.DownloadChunkCount)
+            );
+        }
+
+        private string GetMsixvcDownloadUrl(Version v) {
+            if (v.DownloadURLs == null || v.DownloadURLs.Count == 0) {
+                MessageBox.Show("No MSIXVC download links are available for this version.", "Download error");
+                return null;
+            }
+
+            if (UserPrefs.ManualMsixvcDownloadUrlSelection && v.DownloadURLs.Count > 1) {
+                var dialog = new MsixvcDownloadUrlDialog(v.DisplayName, v.DownloadURLs) {
+                    Owner = this
+                };
+                if (dialog.ShowDialog() != true) {
+                    return null;
+                }
+                return dialog.SelectedUrl;
+            }
+
+            return v.DownloadURLs[0];
+        }
+
         private void InvokeDownload(Version v) {
+            string msixvcDownloadUrl = null;
+            if (v.PackageType == PackageType.GDK) {
+                if (!ShowGDKFirstUseWarning()) {
+                    return;
+                }
+
+                msixvcDownloadUrl = GetMsixvcDownloadUrl(v);
+                if (string.IsNullOrEmpty(msixvcDownloadUrl)) {
+                    return;
+                }
+            }
+
+            int downloadChunkCount = GetDownloadChunkCount();
             CancellationTokenSource cancelSource = new CancellationTokenSource();
             v.IsNew = false;
             v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Initializing);
@@ -999,22 +1038,17 @@ namespace MCLauncher {
                     if (v.StateChangeInfo.VersionState != VersionState.Downloading) {
                         Debug.WriteLine("Actual download started");
                         v.StateChangeInfo.VersionState = VersionState.Downloading;
-                        if (total.HasValue)
-                            v.StateChangeInfo.MaxProgress = total.Value;
                     }
+                    if (total.HasValue && v.StateChangeInfo.MaxProgress != total.Value)
+                        v.StateChangeInfo.MaxProgress = total.Value;
                     v.StateChangeInfo.Progress = current;
                 };
 
                 try {
                     if (v.PackageType == PackageType.UWP) {
-                        await downloader.DownloadAppx(v.UUID, "1", dlPath, dlProgressHandler, cancelSource.Token);
+                        await downloader.DownloadAppx(v.UUID, "1", dlPath, downloadChunkCount, dlProgressHandler, cancelSource.Token);
                     } else if (v.PackageType == PackageType.GDK) {
-                        if (!ShowGDKFirstUseWarning()) {
-                            v.StateChangeInfo = null;
-                            v.UpdateInstallStatus();
-                            return;
-                        }
-                        await downloader.DownloadMsixvc(v.DownloadURLs, dlPath, dlProgressHandler, cancelSource.Token);
+                        await downloader.DownloadMsixvc(msixvcDownloadUrl, dlPath, downloadChunkCount, dlProgressHandler, cancelSource.Token);
                     } else {
                         throw new Exception("Unknown package type");
                     }
@@ -1029,7 +1063,7 @@ namespace MCLauncher {
                     return;
                 } catch (Exception e) {
                     Debug.WriteLine("Download failed:\n" + e.ToString());
-                    if (!(e is TaskCanceledException))
+                    if (!(e is OperationCanceledException))
                         MessageBox.Show("Download failed:\n" + e.ToString());
                     v.StateChangeInfo = null;
                     return;
@@ -1165,6 +1199,17 @@ namespace MCLauncher {
             UserPrefs.VersionsApiGDK = newGdkPackageUrlsEndpoint == "" ? VERSIONS_API_GDK : newGdkPackageUrlsEndpoint;
             Dispatcher.Invoke(LoadVersionList);
             RewritePrefs();
+        }
+
+        private void MenuItemSetDownloadOptionsClicked(object sender, RoutedEventArgs e) {
+            var dialog = new DownloadOptionsDialog(GetDownloadChunkCount(), UserPrefs.ManualMsixvcDownloadUrlSelection) {
+                Owner = this
+            };
+            if (dialog.ShowDialog() == true) {
+                UserPrefs.DownloadChunkCount = dialog.DownloadChunkCount;
+                UserPrefs.ManualMsixvcDownloadUrlSelection = dialog.ManualMsixvcDownloadUrlSelection;
+                RewritePrefs();
+            }
         }
 
         private void MenuItemSetVersionListEndpointClicked(object sender, RoutedEventArgs e) {

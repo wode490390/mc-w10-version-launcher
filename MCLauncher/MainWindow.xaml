@@ -114,6 +114,7 @@
             </MenuItem>
             <MenuItem Header="_Options">
                 <MenuItem Header="Delete installation packages after download to save space" IsCheckable="True" Name="DeleteAppxAfterDownloadOption" Checked="DeleteAppxAfterDownloadCheck_Changed" Unchecked="DeleteAppxAfterDownloadCheck_Changed" IsChecked="{Binding UserPrefs.DeleteAppxAfterDownload }" />
+                <MenuItem Header="Download options..." Name="SetDownloadOptions" Click="MenuItemSetDownloadOptionsClicked" />
                 <MenuItem Header="Set version data endpoints..." Name="SetVersionListEndpoint" Click="MenuItemSetVersionListEndpointClicked" />
                 <MenuItem Header="Show legacy Beta versions tab" IsCheckable="True" Name="ShowBetaTabOption" Checked="ShowBetaTabOption_Changed" Unchecked="ShowBetaTabOption_Changed" IsChecked="{Binding UserPrefs.ShowLegacyBetaTab}" />
             </MenuItem>

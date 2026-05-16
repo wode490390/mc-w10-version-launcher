@@ -14,5 +14,9 @@ namespace MCLauncher {
         public bool HasPreviouslyUsedGDK { get; set; } = false;
 
         public bool ShowLegacyBetaTab { get; set; } = false;
+
+        public bool ManualMsixvcDownloadUrlSelection { get; set; } = false;
+
+        public int DownloadChunkCount { get; set; } = 1;
     }
 }

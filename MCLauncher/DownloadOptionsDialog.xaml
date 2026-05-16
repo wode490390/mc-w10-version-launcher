@@ -1,0 +1,32 @@
+<Window x:Class="MCLauncher.DownloadOptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Download options" Height="190" Width="480" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Downloader chunk count:" Padding="0,3,8,3" />
+        <TextBox Grid.Row="0" Grid.Column="1" Name="ChunkCountTextBox" Width="80" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,12"
+                   Text="Use 1 to disable multipart downloads. Supported range: 1-64."
+                   Foreground="Gray" TextWrapping="Wrap" />
+        <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ManualMsixvcDownloadUrlSelectionCheckBox"
+                  Content="Manually choose MSIXVC download link when multiple links are available" />
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Content="OK" Width="80" Margin="0,0,8,0" IsDefault="True" Click="okButton_Click" />
+            <Button Content="Cancel" Width="80" IsCancel="True" Click="cancelButton_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
