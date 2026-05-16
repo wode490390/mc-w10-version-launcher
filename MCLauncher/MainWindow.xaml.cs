@@ -1168,7 +1168,7 @@ namespace MCLauncher {
         }
 
         private void MenuItemSetVersionListEndpointClicked(object sender, RoutedEventArgs e) {
-            var dialog = new VersionListEndpointDialog(UserPrefs.VersionsApiUWP) {
+            var dialog = new VersionListEndpointDialog(UserPrefs.VersionsApiUWP, UserPrefs.VersionsApiGDK) {
                 Owner = this
             };
             dialog.OnEndpointChanged += onEndpointChangedHandler;
